@@ -1,0 +1,277 @@
+{
+  "bootstrapCompleted": true,
+  "bootstrappedAt": "2026-10-20T10:33:21.635Z",
+  "bootstrappedByUid": "admin-1792492401554-9113f35e",
+  "users": [
+    {
+      "uid": "admin-1792492401554-9113f35e",
+      "email": "admin@example.com",
+      "displayName": "AssMin",
+      "role": "admin",
+      "createdBy": "system-bootstrap",
+      "passwordSalt": "f06ea90dd7f4a4f8f17393b67a88f2db",
+      "passwordHash": "0672472b0694448fe7b17cced9396d6370b459cb03d3a04f05eb70151c5279376015f7f469eb3191d3ab627a4bf931f4a8701296f11efbb9d85e6933672ab3d1",
+      "createdAt": "2026-10-20T10:33:21.635Z"
+    },
+    {
+      "uid": "user-1792496878544-9ga0",
+      "email": "testuser123@example.com",
+      "displayName": "Test User",
+      "role": "student",
+      "passwordSalt": "128dbc5769497186864eb389d3d0d925",
+      "passwordHash": "a6e136c8757d0e6f1a2ad14ced41ba69e072b6944d510aef275b9dd6bd1cfb7da49d823c2366e4bb3a1dd8a4b32042ead4fc97084959e49848176bbeed8843db",
+      "createdAt": "2026-10-20T11:47:58.624Z"
+    },
+    {
+      "uid": "teacher-system-default",
+      "email": "teacher@example.com",
+      "displayName": "Cô Nguyễn Minh Châu (Giáo viên)",
+      "role": "teacher",
+      "createdBy": "system-seed",
+      "passwordSalt": "6047002bd33127ee0dacff60d11227e5",
+      "passwordHash": "3bfd60c6a7f5e4ee67aaaa6886be4f8eedf51d4abd2b668c2e853885f8ea393419001e34e75ed9d7aec95958a65f984aca321dc5fda2f215ae118907ca723d96",
+      "createdAt": "2026-10-20T11:52:38.632Z"
+    },
+    {
+      "uid": "user-1792497171294-ve18",
+      "email": "giaovien.moi@example.com",
+      "displayName": "Thầy Trần Văn Nam",
+      "role": "teacher",
+      "createdBy": "self-register",
+      "passwordSalt": "712881736b931ac2104730f7199e1023",
+      "passwordHash": "4b57d6746e7e983bc4b132804a94c33eb8c852f69d47903fcaece954ba89aa5bc616f80bd22ccad95f85eaf7a3aca8a30446ab7428e9e4efb621f77ab9995fca",
+      "createdAt": "2026-10-20T11:52:51.343Z"
+    },
+    {
+      "uid": "user-1792497175439-yhqn",
+      "email": "admin.moi@example.com",
+      "displayName": "Ban Quản Trị Mới",
+      "role": "admin",
+      "createdBy": "self-register",
+      "passwordSalt": "9efcd3542a2ae85d9ee369554ca5b426",
+      "passwordHash": "7291017471a6ffecc27db91061407894c9b51237b5c5423097ebe3e16f52d66e045cea17f9c6028d2477fa90a33d402396fe86dec448204bab8b8b145a8fe2e5",
+      "createdAt": "2026-10-20T11:52:55.492Z"
+    }
+  ],
+  "exams": [],
+  "questionBank": [],
+  "submissions": [],
+  "auditLogs": [
+    {
+      "id": "audit-1792500284557-is7k",
+      "actorUid": "admin-1792492401554-9113f35e",
+      "actorEmail": "admin@example.com",
+      "actorRole": "admin",
+      "action": "LOGIN",
+      "targetId": "admin-1792492401554-9113f35e",
+      "details": "Đăng nhập thành công (admin)",
+      "ip": "127.0.0.1",
+      "createdAt": "2026-10-20T12:44:44.557Z"
+    },
+    {
+      "id": "audit-1792498066739-xh6o",
+      "actorUid": "teacher-system-default",
+      "actorEmail": "teacher@example.com",
+      "actorRole": "teacher",
+      "action": "LOGIN",
+      "targetId": "teacher-system-default",
+      "details": "Đăng nhập thành công (teacher)",
+      "ip": "127.0.0.1",
+      "createdAt": "2026-10-20T12:07:46.739Z"
+    },
+    {
+      "id": "audit-1792498061991-yti3",
+      "actorUid": "admin-1792492401554-9113f35e",
+      "actorEmail": "admin@example.com",
+      "actorRole": "admin",
+      "action": "LOGIN",
+      "targetId": "admin-1792492401554-9113f35e",
+      "details": "Đăng nhập thành công (admin)",
+      "ip": "127.0.0.1",
+      "createdAt": "2026-10-20T12:07:41.991Z"
+    },
+    {
+      "id": "audit-1792497698198-icld",
+      "actorUid": "admin-1792492401554-9113f35e",
+      "actorEmail": "admin@example.com",
+      "actorRole": "admin",
+      "action": "LOGIN",
+      "targetId": "admin-1792492401554-9113f35e",
+      "details": "Đăng nhập thành công (admin)",
+      "ip": "127.0.0.1",
+      "createdAt": "2026-10-20T12:01:38.198Z"
+    },
+    {
+      "id": "audit-1792497178624-tyir",
+      "actorUid": "user-1792497175439-yhqn",
+      "actorEmail": "admin.moi@example.com",
+      "actorRole": "admin",
+      "action": "LOGIN",
+      "targetId": "user-1792497175439-yhqn",
+      "details": "Đăng nhập thành công (admin)",
+      "ip": "127.0.0.1",
+      "createdAt": "2026-10-20T11:52:58.624Z"
+    },
+    {
+      "id": "audit-1792497175493-ezdt",
+      "actorUid": "user-1792497175439-yhqn",
+      "actorEmail": "admin.moi@example.com",
+      "actorRole": "admin",
+      "action": "CREATE_USER",
+      "targetId": "user-1792497175439-yhqn",
+      "details": "Đăng ký tài khoản mới thành công (Email: admin.moi@example.com, Vai trò: admin)",
+      "ip": "127.0.0.1",
+      "createdAt": "2026-10-20T11:52:55.493Z"
+    },
+    {
+      "id": "audit-1792497171343-5kes",
+      "actorUid": "user-1792497171294-ve18",
+      "actorEmail": "giaovien.moi@example.com",
+      "actorRole": "teacher",
+      "action": "CREATE_USER",
+      "targetId": "user-1792497171294-ve18",
+      "details": "Đăng ký tài khoản mới thành công (Email: giaovien.moi@example.com, Vai trò: teacher)",
+      "ip": "127.0.0.1",
+      "createdAt": "2026-10-20T11:52:51.344Z"
+    },
+    {
+      "id": "audit-1792497164050-eo23",
+      "actorUid": "teacher-system-default",
+      "actorEmail": "teacher@example.com",
+      "actorRole": "teacher",
+      "action": "LOGIN",
+      "targetId": "teacher-system-default",
+      "details": "Đăng nhập thành công (teacher)",
+      "ip": "127.0.0.1",
+      "createdAt": "2026-10-20T11:52:44.050Z"
+    },
+    {
+      "id": "audit-1792497159770-zdu1",
+      "actorUid": "admin-1792492401554-9113f35e",
+      "actorEmail": "admin@example.com",
+      "actorRole": "admin",
+      "action": "LOGIN",
+      "targetId": "admin-1792492401554-9113f35e",
+      "details": "Đăng nhập thành công (admin)",
+      "ip": "127.0.0.1",
+      "createdAt": "2026-10-20T11:52:39.770Z"
+    },
+    {
+      "id": "audit-1792496882570-cy7z",
+      "actorUid": "anonymous",
+      "actorEmail": "testteacher@example.com",
+      "actorRole": "student",
+      "action": "UNAUTHORIZED_ATTEMPT",
+      "targetId": "testteacher@example.com",
+      "details": "Chặn hành vi tự đăng ký nâng quyền trái phép lên 'teacher'",
+      "ip": "127.0.0.1",
+      "createdAt": "2026-10-20T11:48:02.570Z"
+    },
+    {
+      "id": "audit-1792492401636-svsb",
+      "actorUid": "admin-1792492401554-9113f35e",
+      "actorEmail": "admin@example.com",
+      "actorRole": "admin",
+      "action": "BOOTSTRAP_ADMIN",
+      "targetId": "admin-1792492401554-9113f35e",
+      "details": "Khởi tạo thành công Quản trị viên đầu tiên (admin@example.com) và khóa vĩnh viễn quy trình Bootstrap lần đầu",
+      "ip": "127.0.0.1",
+      "createdAt": "2026-10-20T10:33:21.636Z"
+    }
+  ],
+  "activeSessions": [
+    {
+      "sessionId": "sess-1792492401635-c9e8c84fcc42fac2",
+      "uid": "admin-1792492401554-9113f35e",
+      "createdAt": 1792492401635,
+      "expiresAt": 1792535601635
+    },
+    {
+      "sessionId": "sess-1792496878625-b4ad33559ba60dc4",
+      "uid": "user-1792496878544-9ga0",
+      "createdAt": 1792496878625,
+      "expiresAt": 1792540078625
+    },
+    {
+      "sessionId": "sess-1792497159769-30d34a91261629a7",
+      "uid": "admin-1792492401554-9113f35e",
+      "createdAt": 1792497159769,
+      "expiresAt": 1792540359769
+    },
+    {
+      "sessionId": "sess-1792497164050-e8e61488a5e9a80e",
+      "uid": "teacher-system-default",
+      "createdAt": 1792497164050,
+      "expiresAt": 1792540364050
+    },
+    {
+      "sessionId": "sess-1792497171343-10d2fa81dd1a5931",
+      "uid": "user-1792497171294-ve18",
+      "createdAt": 1792497171343,
+      "expiresAt": 1792540371343
+    },
+    {
+      "sessionId": "sess-1792497175492-29502093e42a2e70",
+      "uid": "user-1792497175439-yhqn",
+      "createdAt": 1792497175492,
+      "expiresAt": 1792540375492
+    },
+    {
+      "sessionId": "sess-1792497178624-571463cad3be42b9",
+      "uid": "user-1792497175439-yhqn",
+      "createdAt": 1792497178624,
+      "expiresAt": 1792540378624
+    },
+    {
+      "sessionId": "sess-1792497698197-4c66b71e3b22f09c",
+      "uid": "admin-1792492401554-9113f35e",
+      "createdAt": 1792497698198,
+      "expiresAt": 1792540898198
+    },
+    {
+      "sessionId": "sess-1792498061990-f957474ace75a224",
+      "uid": "admin-1792492401554-9113f35e",
+      "createdAt": 1792498061990,
+      "expiresAt": 1792541261990
+    },
+    {
+      "sessionId": "sess-1792498066738-b375710c4c5ee1bf",
+      "uid": "teacher-system-default",
+      "createdAt": 1792498066739,
+      "expiresAt": 1792541266739
+    },
+    {
+      "sessionId": "sess-1792500284557-aa8b81f1f8e688c2",
+      "uid": "admin-1792492401554-9113f35e",
+      "createdAt": 1792500284557,
+      "expiresAt": 1792543484557
+    }
+  ],
+  "revokedSessionIds": [],
+  "folders": [
+    {
+      "id": "fld-default-1",
+      "name": "Kiểm tra 15 phút & Định kỳ",
+      "color": "blue",
+      "ownerId": "all",
+      "description": "Thư mục chứa các bài kiểm tra ngắn, 15 phút, định kỳ",
+      "createdAt": "2026-10-20T12:44:44.403Z"
+    },
+    {
+      "id": "fld-default-2",
+      "name": "Thi Giữa kỳ & Cuối kỳ",
+      "color": "indigo",
+      "ownerId": "all",
+      "description": "Thư mục bài thi học kỳ chính thức",
+      "createdAt": "2026-10-20T12:44:44.403Z"
+    },
+    {
+      "id": "fld-default-3",
+      "name": "Luyện thi THPT & Khảo sát",
+      "color": "emerald",
+      "ownerId": "all",
+      "description": "Thư mục đề khảo sát chất lượng, ôn thi tốt nghiệp THPT",
+      "createdAt": "2026-10-20T12:44:44.403Z"
+    }
+  ]
+}

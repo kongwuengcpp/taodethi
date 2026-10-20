@@ -1,0 +1,6 @@
+{
+  "name": "Khảo Thí Số — Tạo Bài Thi Online Từ Tài Liệu",
+  "description": "Nền tảng số hóa đề thi từ PDF, DOCX, JPG, PNG với OCR Tiếng Việt, đối chiếu bản gốc và tổ chức thi trực tuyến an toàn cho giáo viên và học sinh Việt Nam.",
+  "requestFramePermissions": [],
+  "majorCapabilities": ["MAJOR_CAPABILITY_SERVER_SIDE_GEMINI_API"]
+}

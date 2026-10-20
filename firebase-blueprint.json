@@ -1,0 +1,203 @@
+{
+  "entities": {
+    "UserProfile": {
+      "title": "UserProfile",
+      "description": "User account profile with role-based access control managed strictly by admins.",
+      "type": "object",
+      "properties": {
+        "uid": {
+          "type": "string",
+          "maxLength": 128,
+          "pattern": "^[a-zA-Z0-9_\\-]+$"
+        },
+        "email": {
+          "type": "string",
+          "format": "email",
+          "maxLength": 256
+        },
+        "displayName": {
+          "type": "string",
+          "maxLength": 120
+        },
+        "role": {
+          "type": "string",
+          "enum": ["student", "teacher", "admin"]
+        },
+        "createdAt": {
+          "type": "string",
+          "format": "date-time"
+        }
+      },
+      "required": ["uid", "email", "displayName", "role", "createdAt"]
+    },
+    "BootstrapState": {
+      "title": "BootstrapState",
+      "description": "One-time lock document ensuring the first administrator bootstrap can only execute once.",
+      "type": "object",
+      "properties": {
+        "locked": {
+          "type": "boolean"
+        },
+        "bootstrappedByUid": {
+          "type": "string",
+          "maxLength": 128,
+          "pattern": "^[a-zA-Z0-9_\\-]+$"
+        },
+        "createdAt": {
+          "type": "string",
+          "format": "date-time"
+        }
+      },
+      "required": ["locked", "bootstrappedByUid", "createdAt"]
+    },
+    "ExamMetadata": {
+      "title": "ExamMetadata",
+      "description": "Published exam metadata without answer keys, readable by students when published and owned by a specific teacher.",
+      "type": "object",
+      "properties": {
+        "id": {
+          "type": "string",
+          "maxLength": 128,
+          "pattern": "^[a-zA-Z0-9_\\-]+$"
+        },
+        "ownerId": {
+          "type": "string",
+          "maxLength": 128,
+          "pattern": "^[a-zA-Z0-9_\\-]+$"
+        },
+        "shareCode": {
+          "type": "string",
+          "maxLength": 32,
+          "pattern": "^[A-Z0-9]+$"
+        },
+        "title": {
+          "type": "string",
+          "maxLength": 300
+        },
+        "subject": {
+          "type": "string",
+          "maxLength": 120
+        },
+        "status": {
+          "type": "string",
+          "enum": ["draft", "published", "closed"]
+        },
+        "version": {
+          "type": "integer"
+        },
+        "durationMinutes": {
+          "type": "integer"
+        },
+        "totalScale": {
+          "type": "integer"
+        },
+        "createdAt": {
+          "type": "string",
+          "format": "date-time"
+        },
+        "updatedAt": {
+          "type": "string",
+          "format": "date-time"
+        }
+      },
+      "required": ["id", "ownerId", "shareCode", "title", "subject", "status", "version", "durationMinutes", "totalScale", "createdAt", "updatedAt"]
+    },
+    "SubmissionRecord": {
+      "title": "SubmissionRecord",
+      "description": "Student exam submission isolated by studentUid and exam ownerId.",
+      "type": "object",
+      "properties": {
+        "id": {
+          "type": "string",
+          "maxLength": 128,
+          "pattern": "^[a-zA-Z0-9_\\-]+$"
+        },
+        "examId": {
+          "type": "string",
+          "maxLength": 128,
+          "pattern": "^[a-zA-Z0-9_\\-]+$"
+        },
+        "examOwnerId": {
+          "type": "string",
+          "maxLength": 128,
+          "pattern": "^[a-zA-Z0-9_\\-]+$"
+        },
+        "studentUid": {
+          "type": "string",
+          "maxLength": 128,
+          "pattern": "^[a-zA-Z0-9_\\-]+$"
+        },
+        "studentName": {
+          "type": "string",
+          "maxLength": 120
+        },
+        "studentClass": {
+          "type": "string",
+          "maxLength": 60
+        },
+        "status": {
+          "type": "string",
+          "enum": ["in_progress", "submitted"]
+        },
+        "scaledScore": {
+          "type": "number"
+        },
+        "createdAt": {
+          "type": "string",
+          "format": "date-time"
+        }
+      },
+      "required": ["id", "examId", "examOwnerId", "studentUid", "studentName", "studentClass", "status", "createdAt"]
+    },
+    "AuditLog": {
+      "title": "AuditLog",
+      "description": "Immutable administrative audit log entry.",
+      "type": "object",
+      "properties": {
+        "id": {
+          "type": "string",
+          "maxLength": 128
+        },
+        "actorUid": {
+          "type": "string",
+          "maxLength": 128
+        },
+        "action": {
+          "type": "string",
+          "maxLength": 80
+        },
+        "targetId": {
+          "type": "string",
+          "maxLength": 128
+        },
+        "createdAt": {
+          "type": "string",
+          "format": "date-time"
+        }
+      },
+      "required": ["id", "actorUid", "action", "targetId", "createdAt"]
+    }
+  },
+  "firestore": {
+    "/users/{userId}": {
+      "schema": { "$ref": "#/entities/UserProfile" },
+      "description": "User profiles with strict RBAC role protection (users cannot self-promote to teacher or admin)."
+    },
+    "/system_bootstrap/{docId}": {
+      "schema": { "$ref": "#/entities/BootstrapState" },
+      "description": "One-time bootstrap state lock document."
+    },
+    "/exams/{examId}": {
+      "schema": { "$ref": "#/entities/ExamMetadata" },
+      "description": "Public exam metadata (answer keys are stored exclusively on the backend server). Teachers can only modify their own exams; students can only read published exams."
+    },
+    "/submissions/{submissionId}": {
+      "schema": { "$ref": "#/entities/SubmissionRecord" },
+      "description": "Student exam submissions. Students can only read their own submissions; teachers can only read submissions for exams they own."
+    },
+    "/audit_logs/{logId}": {
+      "schema": { "$ref": "#/entities/AuditLog" },
+      "description": "Administrative audit logs accessible only to admins."
+    }
+  }
+}

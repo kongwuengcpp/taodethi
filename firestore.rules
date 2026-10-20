@@ -1,0 +1,183 @@
+rules_version = '2';
+
+service cloud.firestore {
+  match /databases/{database}/documents {
+    // Global Default-Deny Safety Net
+    match /{document=**} {
+      allow read, write: if false;
+    }
+
+    function isValidId(id) {
+      return id is string && id.size() >= 1 && id.size() <= 128 && id.matches('^[a-zA-Z0-9_\\-]+$');
+    }
+
+    function incoming() {
+      return request.resource.data;
+    }
+
+    function existing() {
+      return resource.data;
+    }
+
+    function isSignedIn() {
+      return request.auth != null && request.auth.token.email_verified == true;
+    }
+
+    function isAdmin() {
+      return isSignedIn() &&
+        exists(/databases/$(database)/documents/users/$(request.auth.uid)) &&
+        get(/databases/$(database)/documents/users/$(request.auth.uid)).data.role == 'admin';
+    }
+
+    function isTeacher() {
+      return isAdmin() || (
+        isSignedIn() &&
+        exists(/databases/$(database)/documents/users/$(request.auth.uid)) &&
+        get(/databases/$(database)/documents/users/$(request.auth.uid)).data.role == 'teacher'
+      );
+    }
+
+    function isValidUserProfile(data) {
+      return data.keys().hasAll(['uid', 'email', 'displayName', 'role', 'createdAt']) &&
+        data.keys().hasOnly(['uid', 'email', 'displayName', 'role', 'createdAt']) &&
+        data.uid is string && data.uid.size() >= 1 && data.uid.size() <= 128 && data.uid.matches('^[a-zA-Z0-9_\\-]+$') &&
+        data.email is string && data.email.size() >= 3 && data.email.size() <= 256 &&
+        data.displayName is string && data.displayName.size() >= 1 && data.displayName.size() <= 120 &&
+        data.role is string && data.role in ['student', 'teacher', 'admin'] &&
+        data.createdAt == request.time;
+    }
+
+    function isValidBootstrapState(data) {
+      return data.keys().hasAll(['locked', 'bootstrappedByUid', 'createdAt']) &&
+        data.keys().hasOnly(['locked', 'bootstrappedByUid', 'createdAt']) &&
+        data.locked == true &&
+        data.bootstrappedByUid is string && data.bootstrappedByUid.size() >= 1 && data.bootstrappedByUid.size() <= 128 && data.bootstrappedByUid.matches('^[a-zA-Z0-9_\\-]+$') &&
+        data.createdAt == request.time;
+    }
+
+    function isValidExamMetadata(data) {
+      return data.keys().hasAll(['id', 'ownerId', 'shareCode', 'title', 'subject', 'status', 'version', 'durationMinutes', 'totalScale', 'createdAt', 'updatedAt']) &&
+        data.keys().hasOnly(['id', 'ownerId', 'shareCode', 'title', 'subject', 'status', 'version', 'durationMinutes', 'totalScale', 'createdAt', 'updatedAt']) &&
+        data.id is string && data.id.size() >= 1 && data.id.size() <= 128 && data.id.matches('^[a-zA-Z0-9_\\-]+$') &&
+        data.ownerId is string && data.ownerId.size() >= 1 && data.ownerId.size() <= 128 && data.ownerId.matches('^[a-zA-Z0-9_\\-]+$') &&
+        data.shareCode is string && data.shareCode.size() >= 3 && data.shareCode.size() <= 32 && data.shareCode.matches('^[A-Z0-9]+$') &&
+        data.title is string && data.title.size() >= 1 && data.title.size() <= 300 &&
+        data.subject is string && data.subject.size() >= 1 && data.subject.size() <= 120 &&
+        data.status is string && data.status in ['draft', 'published', 'closed'] &&
+        data.version is int && data.version >= 1 &&
+        data.durationMinutes is int && data.durationMinutes >= 1 && data.durationMinutes <= 300 &&
+        data.totalScale is int && data.totalScale >= 1 && data.totalScale <= 1000 &&
+        data.createdAt is timestamp &&
+        data.updatedAt == request.time;
+    }
+
+    // 0. One-Time Bootstrap Lock Document (Can only be created ONCE when it does not exist yet; never updated or deleted)
+    match /system_bootstrap/{docId} {
+      allow get: if isSignedIn() && docId == 'state';
+      allow list: if false;
+      allow create: if isSignedIn() &&
+        docId == 'state' &&
+        !exists(/databases/$(database)/documents/system_bootstrap/state) &&
+        isValidBootstrapState(incoming()) &&
+        incoming().bootstrappedByUid == request.auth.uid;
+      allow update, delete: if false;
+    }
+
+    // 1. User Profiles Collection (Row-Level Security & Self-Promotion Prevention)
+    match /users/{userId} {
+      allow get: if isSignedIn() && isValidId(userId) && (request.auth.uid == userId || isAdmin());
+      allow list: if isAdmin();
+
+      // Users can register themselves only as 'student', OR as the first-time 'admin' atomically with /system_bootstrap/state creation
+      allow create: if isSignedIn() &&
+        isValidId(userId) &&
+        isValidUserProfile(incoming()) &&
+        incoming().uid == userId &&
+        (
+          (request.auth.uid == userId && incoming().role == 'student') ||
+          (
+            request.auth.uid == userId &&
+            incoming().role == 'admin' &&
+            !exists(/databases/$(database)/documents/system_bootstrap/state) &&
+            existsAfter(/databases/$(database)/documents/system_bootstrap/state) &&
+            getAfter(/databases/$(database)/documents/system_bootstrap/state).data.bootstrappedByUid == request.auth.uid
+          ) ||
+          isAdmin()
+        );
+
+      // Users can only update their displayName; ONLY Admin can change `role`
+      allow update: if isSignedIn() &&
+        isValidId(userId) &&
+        isValidUserProfile(incoming()) &&
+        incoming().uid == existing().uid &&
+        incoming().email == existing().email &&
+        incoming().createdAt == existing().createdAt &&
+        (
+          (request.auth.uid == userId && incoming().role == existing().role && incoming().diff(existing()).affectedKeys().hasOnly(['displayName'])) ||
+          (isAdmin() && incoming().diff(existing()).affectedKeys().hasOnly(['role', 'displayName']))
+        );
+
+      allow delete: if isAdmin() && isValidId(userId);
+    }
+
+    // 2. Exams Collection (Row-Level Security: Teachers manage only their own exams; Students read only published exams)
+    match /exams/{examId} {
+      allow get: if isSignedIn() && isValidId(examId) && (
+        existing().status == 'published' ||
+        existing().ownerId == request.auth.uid ||
+        isAdmin()
+      );
+
+      allow list: if isSignedIn() && (
+        resource.data.status == 'published' ||
+        resource.data.ownerId == request.auth.uid ||
+        isAdmin()
+      );
+
+      allow create: if isTeacher() &&
+        isValidId(examId) &&
+        isValidExamMetadata(incoming()) &&
+        incoming().id == examId &&
+        incoming().ownerId == request.auth.uid &&
+        incoming().createdAt == request.time;
+
+      allow update: if isTeacher() &&
+        isValidId(examId) &&
+        isValidExamMetadata(incoming()) &&
+        incoming().id == existing().id &&
+        incoming().ownerId == existing().ownerId &&
+        incoming().createdAt == existing().createdAt &&
+        (existing().ownerId == request.auth.uid || isAdmin()) &&
+        incoming().diff(existing()).affectedKeys().hasOnly(['shareCode', 'title', 'subject', 'status', 'version', 'durationMinutes', 'totalScale', 'updatedAt']);
+
+      allow delete: if isTeacher() &&
+        isValidId(examId) &&
+        (existing().ownerId == request.auth.uid || isAdmin());
+    }
+
+    // 3. Submissions Collection (Students read only their own; Teachers read only submissions for exams they own)
+    match /submissions/{submissionId} {
+      allow get: if isSignedIn() && isValidId(submissionId) && (
+        existing().studentUid == request.auth.uid ||
+        existing().examOwnerId == request.auth.uid ||
+        isAdmin()
+      );
+
+      allow list: if isSignedIn() && (
+        resource.data.studentUid == request.auth.uid ||
+        resource.data.examOwnerId == request.auth.uid ||
+        isAdmin()
+      );
+
+      // Submissions and grading are strictly written by the trusted Backend Server
+      allow create, update, delete: if false;
+    }
+
+    // 4. Audit Logs Collection (Read-only for Admin; written strictly by Backend Server)
+    match /audit_logs/{logId} {
+      allow get: if isAdmin() && isValidId(logId);
+      allow list: if isAdmin();
+      allow create, update, delete: if false;
+    }
+  }
+}
